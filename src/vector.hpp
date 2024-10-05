@@ -5,40 +5,46 @@ class Vector
 {
     public:
 
-    //Default Constrcutor
-    Vector():m_vector(new T[m_default_size]), m_current_pointer(0)
+    //Default Constructor
+    Vector():
+    m_default_size(20),
+    m_vector(static_cast<T*>(operator new[](m_default_size* sizeof(T)))), 
+    m_current_pointer(0)
     {
 
     }
 
-    //Param Constrcutor
-    Vector(int size): m_vector(new T[size]), m_current_pointer(0)
+    //Param Construction
+    Vector(int size): m_default_size(size), 
+    m_vector(static_cast<T*>(operator new[](size * sizeof(T)))), 
+    m_current_pointer(0)
     {
 
     }
-    //Params constructor with a value
-    Vector(int size, T default_value): m_vector(new T[size]), m_default_size(size)
+
+    //Params Construction with a value
+    Vector(int size, T default_value): m_default_size(size),
+    m_vector(static_cast<T*>(operator new[](size * sizeof(T)))), 
+    m_current_pointer(0)
     {
         for (int i = 0; i < size; ++i) {
-            m_vector[i] = default_value;
+            new(&m_vector[i]) T(default_value);
         }
     }
 
-
     //Copy assignment operator
     Vector& operator=(const Vector& copy_vector){
-        delete m_vector;
+        clear(); // Clear current objects
         m_default_size = copy_vector.m_default_size;
         m_current_pointer = copy_vector.m_current_pointer;
-        m_vector = new T[m_default_size];
-        for(size_t i =0; i<m_current_pointer; i++)
-            {
-                m_vector[i] = copy_vector[i];
-            }
+        m_vector = static_cast<T*>(operator new[](m_default_size * sizeof(T)));
+        for (size_t i = 0; i < m_current_pointer; i++) {
+            new(&m_vector[i]) T(copy_vector.m_vector[i]); // Copy construct
+        }
         return *this;
     }
     
-    //Copy constructor
+    //Copy Constructor
     Vector(const Vector& copy_vector): m_default_size(copy_vector.m_default_size),
                                       m_current_pointer(copy_vector.m_current_pointer),
                                       m_vector(new T[m_default_size])
@@ -50,8 +56,18 @@ class Vector
         }
     }
 
+   template <typename... Args>
+void emplace_back(Args&&... args)
+{
+    if (m_current_pointer == m_default_size) {
+        resize();
+    }
+    // Construct the object directly in the array using placement new
+    new(&m_vector[m_current_pointer++]) T(std::forward<Args>(args)...);
+}
 
-    //Move constructor
+
+    //Move Constructor
     Vector(Vector&& copy_vector){
         m_default_size = copy_vector.m_default_size;
         m_current_pointer = copy_vector.m_current_pointer;
@@ -78,8 +94,8 @@ class Vector
 
     ~Vector()
     {
-        delete m_vector;
-        m_vector = nullptr;
+        clear(); // Ensure all objects are destructed
+        ::operator delete[](m_vector); // Deallocate raw memory
     }
 
     
@@ -106,17 +122,22 @@ class Vector
         }
     }
 
+    void push_back(T value)
+    {  
+        if(m_current_pointer == m_default_size)
+        {
+            resize();
+        }
+        m_vector[m_current_pointer++] = T(value);
+    }
+
     void push_back(T& value)
     {
         if(m_current_pointer == m_default_size)
         {
             resize();
         }
-        else
-        {
-            m_vector[m_current_pointer] = value;
-            m_current_pointer++;
-        }
+        m_vector[m_current_pointer++] = value;
     }
 
     void pop_back()
@@ -130,9 +151,11 @@ class Vector
     }
 
     void clear(){
-        m_current_pointer = 0;
-        delete m_vector;
-        m_vector = new T[m_default_size];
+        for(size_t i =0; i< m_current_pointer; i++)
+        {
+            m_vector[i].~T();
+        }
+        m_current_pointer =0;
     }
 
     private:
