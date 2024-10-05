@@ -4,16 +4,17 @@
 
 
 struct S{
-
-    S(int val)
+    S(int val1, int val2)
     {
-        m_val = val;
+        m_val = val1;
+        n_val = val2;
     }
     ~S()
     {
 
     }
     int m_val;
+    int n_val;
 };
 
 int main()
@@ -22,7 +23,8 @@ int main()
     Vector<int> v;
     v.push_back(1);
     v.push_back(2);
-   Vector<S> s_v;
-    s_v.push_back(S(5));
+    Vector<S> s_v;
+    std::cout << "Initialized vector of type S." << std::endl;
+    s_v.emplace_back(5, 6);
 }
 

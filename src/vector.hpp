@@ -60,6 +60,7 @@ class Vector
 void emplace_back(Args&&... args)
 {
     if (m_current_pointer == m_default_size) {
+        std::cout << "In emplace_back, about to call resize()." << std::endl;
         resize();
     }
     // Construct the object directly in the array using placement new
@@ -115,11 +116,15 @@ void emplace_back(Args&&... args)
     {
         int current_default_size = m_default_size;
         m_default_size = m_default_size*2;
-        T* temp_vector = new T[m_default_size];
+        T* temp_vector;
+        temp_vector = static_cast<T*>(operator new[](m_default_size* sizeof(T))); 
         for(size_t i =0 ;i < current_default_size; i++)
         {
             temp_vector[i] = m_vector[i];
         }
+        clear();
+        m_current_pointer = current_default_size;
+        m_vector = temp_vector;
     }
 
     void push_back(T value)
