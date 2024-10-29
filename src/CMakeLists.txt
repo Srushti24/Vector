@@ -1,10 +1,9 @@
 # Add the executable target
 add_executable(Vector
-    main.cpp
-    vector_test.cpp)
+    main.cpp)
 
 # Add the library target (no source file needed for header-only)
-add_library(Vectorlib INTERFACE)
+add_library(Vectorlib INTERFACE  vector_test.cpp)
 
 # Specify the include directory for the header file
 target_include_directories(Vectorlib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
