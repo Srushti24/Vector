@@ -1,18 +1,19 @@
 #include <iostream>
+#include <memory>
 
 template <typename T> class Vector {
   public:
     // Constructor
-    Vector() : array_(new T[capacity_]) { size_ = 0; }
+    Vector() : array_(std::make_unique<T[]>(capacity_)) { size_ = 0; }
 
     // Destructor
     ~Vector() { destroy(); }
 
-    void destroy() { delete[] array_; }
+    void destroy() { }
 
     // Copy Constructor
-    Vector(const Vector& vectorCopy)
-        : array_(new T[vectorCopy.capacity_]), size_(vectorCopy.size_), capacity_(vectorCopy.capacity_) {
+     Vector(const Vector& vectorCopy)
+        : size_(vectorCopy.size_), capacity_(vectorCopy.capacity_), array_(std::make_unique<T[]>(vectorCopy.capacity_)) {
         for (size_t i = 0; i < vectorCopy.size(); i++) {
             array_[i] = vectorCopy.array_[i];
         }
@@ -21,20 +22,20 @@ template <typename T> class Vector {
     // Copy Assignment operator
     Vector& operator=(const Vector& vectorCopy) {
         destroy();
-        array_ = new T[vectorCopy.capacity_];
+        size_     = vectorCopy.size_;
+        capacity_ = vectorCopy.capacity_;
+        array_ = std::make_unique<T[]>(vectorCopy.capacity_);
         for (size_t i = 0; i < vectorCopy.size(); i++) {
             array_[i] = vectorCopy.array_[i];
         }
-        size_     = vectorCopy.size_;
-        capacity_ = vectorCopy.capacity_;
         return *this;
     }
 
     // Move Constructor
     Vector(Vector&& vectorCopy) : array_(vectorCopy.array_), capacity_(vectorCopy.capacity_), size_(vectorCopy.size_) {
-        vectorCopy.array_    = nullptr;
+        vectorCopy.array_    = std::make_unique<T[]>(original_capacity_);
         vectorCopy.size_     = 0;
-        vectorCopy.capacity_ = 0;
+        vectorCopy.capacity_ = original_capacity_;
     }
 
     // Move Assignment operator
@@ -43,9 +44,9 @@ template <typename T> class Vector {
         array_               = vectorCopy.array_;
         capacity_            = vectorCopy.capacity_;
         size_                = vectorCopy.size_;
-        vectorCopy.array_    = nullptr;
+        vectorCopy.array_    = std::make_unique<T[]>(original_capacity_);
         vectorCopy.size_     = 0;
-        vectorCopy.capacity_ = 0;
+        vectorCopy.capacity_ = original_capacity_;
         return *this;
     }
 
@@ -68,7 +69,7 @@ template <typename T> class Vector {
     // resize
     void resize() {
         capacity_    = capacity_ * 2;
-        T* tempArray = new T[capacity_];
+        T* tempArray = std::make_unique<T[]>(capacity_);
         for (size_t i = 0; i < size_; i++) {
             tempArray[i] = array_[i];
         }
@@ -82,6 +83,7 @@ template <typename T> class Vector {
 
   private:
     int capacity_ = 10;
-    T*  array_;
+    int original_capacity_ = 10;
+    std::unique_ptr<T[]>  array_;
     int size_ = 0;
 };

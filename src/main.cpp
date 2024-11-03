@@ -2,10 +2,6 @@
 #include <iostream>
 
 int main(int argc, const char* argv[]) {
-    testVectorPushPopSize();
-    testVectorResizeValueOptClear();
-    testVectorCopyConstrCopyAssignOpt();
-    testVectorMoveConstructor();
-    testVectorMoveAssignOpt();
+    testParamConstructorSWithVector();
     return 0;
 }
