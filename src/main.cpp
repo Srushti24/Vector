@@ -3,5 +3,6 @@
 
 int main(int argc, const char* argv[]) {
     testParamConstructorSWithVector();
-    return 0;
+    testVectorPushPopMoveSize();
+    testVectorResizeValueOptClear();
 }

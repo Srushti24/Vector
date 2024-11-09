@@ -9,13 +9,15 @@ template <typename T> class Vector {
     // Destructor
     ~Vector() { destroy(); }
 
-    void destroy() { }
+    void destroy() { 
+        delete[] array_;
+    }
 
     // Copy Constructor
      Vector(const Vector& vectorCopy)
         : size_(vectorCopy.size_), capacity_(vectorCopy.capacity_), array_(new std::unique_ptr<T>[capacity_]) {
         for (size_t i = 0; i < vectorCopy.size(); i++) {
-            array_[i] = vectorCopy.array_[i];
+            array_[i] = std::make_unique<T>(*vectorCopy.array_[i]);
         }
     }
 
@@ -26,7 +28,7 @@ template <typename T> class Vector {
         capacity_ = vectorCopy.capacity_;
         array_ = new std::unique_ptr<T>[capacity_];
         for (size_t i = 0; i < vectorCopy.size(); i++) {
-            array_[i] = vectorCopy.array_[i];
+            array_[i] = std::make_unique<T>(*vectorCopy.array_[i]);
         }
         return *this;
     }
@@ -51,11 +53,12 @@ template <typename T> class Vector {
     }
 
     // Push element
-    void push_back(T value) {
+    template<typename... Args>
+    void push_back(Args&&... args) {
         if (size_ == capacity_) {
             resize();
         }
-        array_[size_] = new T(value);
+        array_[size_] = std::make_unique<T>(std::forward<Args>(args)...);
         size_++;
     }
 
@@ -64,14 +67,15 @@ template <typename T> class Vector {
     void clear() {
         destroy();
         size_  = 0;
-        array_ = new T[capacity_];
+        array_ = new std::unique_ptr<T>[capacity_];
     }
+
     // resize
     void resize() {
         capacity_    = capacity_ * 2;
-        T* tempArray = new std::unique_ptr<T>[capacity_];
+        std::unique_ptr<T>* tempArray =  new std::unique_ptr<T>[capacity_];
         for (size_t i = 0; i < size_; i++) {
-            tempArray[i] = array_[i];
+            tempArray[i] = std::move(array_[i]);
         }
         array_    = tempArray;
         tempArray = nullptr;
@@ -79,7 +83,9 @@ template <typename T> class Vector {
 
     int size() const { return size_; }
 
-    T operator[](int currentPosition) { return array_[currentPosition]; }
+    T operator[](int currentPosition) {
+        return *array_[currentPosition]; 
+    }
 
   private:
     int capacity_ = 10;
