@@ -4,7 +4,7 @@
 template <typename T> class Vector {
   public:
     // Constructor
-    Vector() : array_(std::make_unique<T[]>(capacity_)) { size_ = 0; }
+    Vector() : array_(new std::unique_ptr<T>[capacity_]) { size_ = 0; }
 
     // Destructor
     ~Vector() { destroy(); }
@@ -13,7 +13,7 @@ template <typename T> class Vector {
 
     // Copy Constructor
      Vector(const Vector& vectorCopy)
-        : size_(vectorCopy.size_), capacity_(vectorCopy.capacity_), array_(std::make_unique<T[]>(vectorCopy.capacity_)) {
+        : size_(vectorCopy.size_), capacity_(vectorCopy.capacity_), array_(new std::unique_ptr<T>[capacity_]) {
         for (size_t i = 0; i < vectorCopy.size(); i++) {
             array_[i] = vectorCopy.array_[i];
         }
@@ -24,7 +24,7 @@ template <typename T> class Vector {
         destroy();
         size_     = vectorCopy.size_;
         capacity_ = vectorCopy.capacity_;
-        array_ = std::make_unique<T[]>(vectorCopy.capacity_);
+        array_ = new std::unique_ptr<T>[capacity_];
         for (size_t i = 0; i < vectorCopy.size(); i++) {
             array_[i] = vectorCopy.array_[i];
         }
@@ -33,7 +33,7 @@ template <typename T> class Vector {
 
     // Move Constructor
     Vector(Vector&& vectorCopy) : array_(vectorCopy.array_), capacity_(vectorCopy.capacity_), size_(vectorCopy.size_) {
-        vectorCopy.array_    = std::make_unique<T[]>(original_capacity_);
+        vectorCopy.array_    = new std::unique_ptr<T>[capacity_];
         vectorCopy.size_     = 0;
         vectorCopy.capacity_ = original_capacity_;
     }
@@ -44,7 +44,7 @@ template <typename T> class Vector {
         array_               = vectorCopy.array_;
         capacity_            = vectorCopy.capacity_;
         size_                = vectorCopy.size_;
-        vectorCopy.array_    = std::make_unique<T[]>(original_capacity_);
+        vectorCopy.array_    = new std::unique_ptr<T>[capacity_];
         vectorCopy.size_     = 0;
         vectorCopy.capacity_ = original_capacity_;
         return *this;
@@ -55,7 +55,7 @@ template <typename T> class Vector {
         if (size_ == capacity_) {
             resize();
         }
-        array_[size_] = value;
+        array_[size_] = new T(value);
         size_++;
     }
 
@@ -69,7 +69,7 @@ template <typename T> class Vector {
     // resize
     void resize() {
         capacity_    = capacity_ * 2;
-        T* tempArray = std::make_unique<T[]>(capacity_);
+        T* tempArray = new std::unique_ptr<T>[capacity_];
         for (size_t i = 0; i < size_; i++) {
             tempArray[i] = array_[i];
         }
@@ -84,6 +84,6 @@ template <typename T> class Vector {
   private:
     int capacity_ = 10;
     int original_capacity_ = 10;
-    std::unique_ptr<T[]>  array_;
+    std::unique_ptr<T>*  array_;
     int size_ = 0;
 };
