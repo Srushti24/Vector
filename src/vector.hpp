@@ -1,3 +1,7 @@
+#ifndef VECTOR_HPP
+#define VECTOR_HPP
+
+
 #include <iostream>
 #include <memory>
 
@@ -93,3 +97,5 @@ template <typename T> class Vector {
     std::unique_ptr<T>*  array_;
     int size_ = 0;
 };
+
+#endif

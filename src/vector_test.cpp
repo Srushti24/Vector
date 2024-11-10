@@ -68,4 +68,3 @@ void testVectorResizeValueOptClear() {
     assert(temp.size() == 0);
 }
 
-

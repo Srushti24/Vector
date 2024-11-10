@@ -1,15 +1,24 @@
+#ifndef VECTOR_V2_HPP
+#define VECTOR_V2_HPP
+
 #include <iostream>
 #include <memory>
 
 template <typename T> class VectorV2 {
   public:
     // Constructor
-    VectorV2() : array_(new T[capacity_]) { size_ = 0; }
+    VectorV2() : array_(new T[capacity_]) {
+
+    };
 
     // Destructor
-    ~VectorV2() { destroy() };
+    ~VectorV2() { 
+        destroy();
+    };
 
-    void destroy() {delete array_[] }
+    void destroy() {
+        delete[] array_;
+    }
 
     // Copy Constructor
      VectorV2(const VectorV2& vectorCopy)
@@ -87,3 +96,6 @@ template <typename T> class VectorV2 {
     T* array_;
     int size_ = 0;
 };
+
+
+#endif
