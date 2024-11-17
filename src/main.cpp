@@ -1,5 +1,6 @@
 #include "vector_v2_test.cpp"
 #include "vector_v3_test.cpp"
+#include "vector_v4_test.cpp"
 #include "vector_test.cpp"
 #include <iostream>
 
@@ -24,9 +25,14 @@ void testVectorV3() {
     checkMemoryLeaks();
 }
 
+void testVectorV4(){
+   // Vectorv4TestPushPop();
+    VectorV4Struct();
+}
 
 int main(int argc, const char* argv[]) {
-    testVector();
-    testVectorV2();
-    testVectorV3();
+    // testVector();
+    // testVectorV2();
+    // testVectorV3();
+    testVectorV4();
 }
