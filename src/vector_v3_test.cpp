@@ -1,5 +1,6 @@
 #include <cassert>
-#include <vector_v3.hpp>
+#include "vector_v3.hpp"
+#include <iostream>
 
 void Vectorv3TestStruct() {
     struct S {
@@ -105,4 +106,13 @@ void checkMemoryLeaks(){
     }
     assert(destructor ==4);
 
+}
+
+
+int main(){
+    Vectorv3TestStruct();
+    testVectorV3PushPopMoveSize();
+    testVectorV3ResizeValueOptClear();
+    checkMemoryLeaks();
+    return 0;
 }

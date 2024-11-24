@@ -17,7 +17,8 @@ template <typename T> class VectorV3 {
         : capacity_(copy.capacity_), size_(copy.size_), original_capacity_(copy.original_capacity_) {
         array_ = new T*[capacity_];
         for (size_t i = 0; i < size_; i++) {
-            array_[i] = new T(*copy.array_[i]);
+            T value = *copy.array_[i];
+            array_[i] = new T(value);
         }
     }
 

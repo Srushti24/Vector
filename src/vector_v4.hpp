@@ -10,7 +10,6 @@ class VectorV4{
     public:
     VectorV4(): capacity(10),temp((T*)(new char[sizeof(T)* capacity])), original_capacity(10),
     size_(0) {
-        std::cout << "constructor created in VectoprV4" << std::endl;
     }
 
     ~VectorV4(){
@@ -18,8 +17,14 @@ class VectorV4{
     }
 
     void destroy(){
-        std::cout << "destroy " << std::endl;
         delete[] temp;
+    }
+
+    T operator[](int pos){
+        return temp[pos];
+    }
+    T operator[](int pos) const{
+        return temp[pos];
     }
 
     //Copy Constructor
@@ -58,20 +63,19 @@ class VectorV4{
         original_capacity = vectorv4Copy.original_capacity;
         capacity = vectorv4Copy.capacity;
         size_ = vectorv4Copy.size_;
+        vectorv4Copy.temp = nullptr;
         return *this;
     }
-
-    T& operator[](int pos){
-        return temp[pos];
-    }
-
 
     //Move Constructor
     VectorV4(VectorV4&& vectorv4Copy):temp(vectorv4Copy.temp),
     size_(vectorv4Copy.size_), original_capacity(vectorv4Copy.original_capacity),
     capacity(vectorv4Copy.capacity)
     {
-
+        vectorv4Copy.temp = (T*)new char[sizeof(T)* vectorv4Copy.capacity];
+        vectorv4Copy.capacity = 10;
+        vectorv4Copy.original_capacity = 10;
+        vectorv4Copy.size_ = 0;
     }
     
     //Push Back
@@ -83,7 +87,6 @@ class VectorV4{
         }
         temp[size_] = val;
         size_++;
-        std::cout << "size is " << size_ << std::endl;
     }
 
     void resize()

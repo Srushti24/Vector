@@ -1,5 +1,6 @@
 #include <cassert>
-#include <vector.hpp>
+#include "vector.hpp"
+#include <iostream>
 
 void testVectorPushPopMoveSize() {
     Vector<int> temp;
@@ -46,4 +47,11 @@ void testVectorCopyConstructorCopyAssign(){
         assert(temp2[i] == i*2);  
         assert(temp1[i] == i*2);  
     }
+}
+
+int main(){
+    testVectorPushPopMoveSize();
+    testVectorResizeValueOptClear();
+    testVectorCopyConstructorCopyAssign();
+    return 0;
 }

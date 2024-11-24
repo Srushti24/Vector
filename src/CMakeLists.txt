@@ -1,18 +1,16 @@
-# Add the executable target
-add_executable(Vector
-    main.cpp)
+add_executable(vector_v4_test 
+vector_v4_test.cpp)
 
-# Add the library target (no source file needed for header-only)
-add_library(Vectorlib INTERFACE   vector_test.cpp vector_v2_test.cpp vector_v3_test.cpp vector_v4_test.cpp)
+add_executable(vector_v3_test 
+vector_v3_test.cpp)
 
-# Specify the include directory for the header file
-target_include_directories(Vectorlib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+add_executable(vector_v2_test 
+vector_v2_test.cpp)
 
-# Link the library to the executable
-target_link_libraries(Vector PUBLIC Vectorlib)
-
+add_executable(vector_test 
+vector_test.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(Vector PRIVATE -fsanitize=address -g)
-    target_link_libraries(Vector PRIVATE -fsanitize=address)
+    add_compile_options(-fsanitize=address -g)
+    add_link_options(-fsanitize=address)
 endif()
