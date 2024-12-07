@@ -7,5 +7,6 @@
 mkdir build
 cd build
 cmake ..
-make 
-./src/vector_v4_test
+make
+cd src
+./vector_v4_test

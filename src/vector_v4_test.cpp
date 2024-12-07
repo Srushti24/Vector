@@ -11,6 +11,60 @@ void Vectorv4TestPushPop(){
     assert(temp[1] == 2);
 }
 
+void testS(){
+    struct S {
+    S(){  // constructor
+        std::cout << "S constructor called" << std::endl; 
+    }
+    ~S() {  // destructor
+        assert(x == 5);
+        std::cout << "S destructor called" << std::endl; 
+    }
+   S& operator=(const S& copy) // copy assignment operator
+   {
+    std::cout << " before assgn x = " << x << std::endl;
+    x = copy.x;
+    std::cout << " after assgn x = " << x << std::endl;
+    return *this;
+   }
+
+    S(const S& copy):x(copy.x) // copy constructor
+   {
+    std::cout << " copy constructor x = " << x << std::endl;
+   }
+    int x = 5;
+  };
+
+  {
+    VectorV4<S> temp;
+    S S1;
+    S S2;
+    temp.push_back(S1);
+    temp.push_back(S2);
+    for(size_t i =0; i< temp.size();i++)
+    {
+        std::cout << "X value of S is = " << temp[i].x << std::endl;
+    }
+  }
+}
+
+
+
+void testS1(){
+    std::cout << "testS()" << std::endl;
+    struct S {
+    int x = 5;
+  };
+
+  {
+    VectorV4<S> temp;
+    temp.push_back(S());
+  //  temp[0].x = 6; //fix it
+    std::cout << "temp[0].x = " << temp[0].x << std::endl;
+  }
+}
+
+
 void VectorV4Struct(){
     struct S{
         S(int a, int b, int c):m_a(a), m_b(b), m_c(c)
@@ -97,9 +151,11 @@ void testResize()
 }
 
 int main(){
-    Vectorv4TestPushPop();
-    VectorV4Struct();
-    testResize();
+    // Vectorv4TestPushPop();
+    // VectorV4Struct();
+    // testResize();
+    testS();
+   // testS1();
     return 0;
 }
 

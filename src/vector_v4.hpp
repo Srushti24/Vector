@@ -17,6 +17,10 @@ class VectorV4{
     }
 
     void destroy(){
+        for(size_t i=0; i< size_;i++)
+        {
+            temp[i].~T();
+        }
         delete[] temp;
     }
 
@@ -97,6 +101,7 @@ class VectorV4{
         {
             copy_size_[i] = temp[i];
         }
+        delete[] temp;
         temp = copy_size_;
     }
 
