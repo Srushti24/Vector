@@ -21,13 +21,15 @@ class VectorV4{
         {
             temp[i].~T();
         }
-        delete[] temp;
+
+       // delete[] temp; // galat because we r not deciding type  T
+        // you cant make an object die again, illegal behavior and program can crash
     }
 
-    T operator[](int pos){
+    T& operator[](int pos){
         return temp[pos];
     }
-    T operator[](int pos) const{
+    T& operator[](int pos) const{
         return temp[pos];
     }
 
@@ -45,7 +47,7 @@ class VectorV4{
     }
 
     //Copy Assignment Operator
-    VectorV4& operator=(const VectorV4& vectorv4Copy)
+    VectorV4& operator=(const VectorV4& vectorv4Copy) 
     {
         destroy();
         temp = (T*)(new char[sizeof(T)* vectorv4Copy.capacity]);
@@ -68,6 +70,9 @@ class VectorV4{
         capacity = vectorv4Copy.capacity;
         size_ = vectorv4Copy.size_;
         vectorv4Copy.temp = nullptr;
+        vectorv4Copy.original_capacity = 10;
+        vectorv4Copy.capacity = 10;
+        vectorv4Copy.size_ =0;
         return *this;
     }
 
@@ -83,15 +88,30 @@ class VectorV4{
     }
     
     //Push Back
-    void push_back(T val)
+    void push_back(T val) // fix push_back,  //0,12,24 a(b)
     {
         if(size_ == capacity)
         {
             resize();
         }
-        temp[size_] = val;
+        temp[size_] = val; // it calls a function call, lets say f( which is copy assign)
+        // f(&temp[size_], val);
+        // these are just function names, udhar kachra hai// it will not have kachra when there is 
+        //some function called which sets its value
+        new(&temp[size_])T(val); // copy constructor -- function call
+       // new is a syntax for a function call to constructor(depends on params and how its defined)
+       //f( &temp[size_],val);
         size_++;
     }
+
+    void clear() {
+        destroy();
+        temp = nullptr;
+        original_capacity = 10;
+        capacity = 10;
+        size_ =0;
+    }
+
 
     void resize()
     {
@@ -101,7 +121,7 @@ class VectorV4{
         {
             copy_size_[i] = temp[i];
         }
-        delete[] temp;
+        delete[] temp; // wrong
         temp = copy_size_;
     }
 

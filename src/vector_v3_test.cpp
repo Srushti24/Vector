@@ -1,24 +1,20 @@
-#include <cassert>
 #include "vector_v3.hpp"
+#include <cassert>
 #include <iostream>
 
 void Vectorv3TestStruct() {
     struct S {
-        S(int a, int b, int c) : m_a(a), m_b(b), m_c(c) {
-
-        }
-        ~S() {
-
-        }
+        S(int a, int b, int c) : m_a(a), m_b(b), m_c(c) {}
+        ~S() {}
         int m_a;
         int m_b;
         int m_c;
     };
     VectorV3<S> temp;
-    temp.push_back(S(4, 5, 6));  // push_back
+    temp.push_back(S(4, 5, 6)); // push_back
     temp.push_back(S(43, 52, 61));
     assert(temp.size() == 2);
-    VectorV3<S> temp1(temp);   // Copy constructor
+    VectorV3<S> temp1(temp); // Copy constructor
     assert(temp1.size() == 2);
     assert(temp1[0].m_a == 4);
     assert(temp1[0].m_b == 5);
@@ -30,13 +26,13 @@ void Vectorv3TestStruct() {
     temp3.push_back(S(5, 6, 7));
     temp3.push_back(S(7, 8, 9));
     temp3.push_back(S(27, 28, 29));
-    temp = temp3;     // Copy Assign
+    temp = temp3; // Copy Assign
     assert(temp.size() == 3);
     assert(temp[0].m_a == 5);
     assert(temp[0].m_b == 6);
     assert(temp[0].m_c == 7);
     assert(temp3.size() == 3);
-    VectorV3<S> temp4(std::move(temp3));  // Move constructor
+    VectorV3<S> temp4(std::move(temp3)); // Move constructor
     assert(temp4.size() == 3);
     assert(temp3.size() == 0);
     assert(temp[2].m_a == 27);
@@ -44,7 +40,7 @@ void Vectorv3TestStruct() {
     assert(temp[2].m_c == 29);
     temp4 = std::move(temp1); // Move Assign
     assert(temp4.size() == 2);
-    assert(temp1.size() == 0);  // Size
+    assert(temp1.size() == 0); // Size
 }
 
 void testVectorV3PushPopMoveSize() {
@@ -79,18 +75,13 @@ void testVectorV3ResizeValueOptClear() {
     assert(temp.size() == 0);
 }
 
+void checkMemoryLeaks() {
+    int constructor = 0;
+    int destructor  = 0;
+    struct S {
+        S(int& constructor, int& destructor) : m_constructor(constructor), m_destructor(destructor) { m_constructor++; }
 
-void checkMemoryLeaks(){
-    int constructor =0;
-    int destructor =0;
-    struct S{
-        S(int& constructor, int& destructor): m_constructor(constructor), m_destructor(destructor){
-            m_constructor++;
-        }
-
-        ~S(){
-            m_destructor++;
-        }
+        ~S() { m_destructor++; }
 
         int& m_constructor;
         int& m_destructor;
@@ -98,18 +89,15 @@ void checkMemoryLeaks(){
 
     {
         VectorV3<S> temp;
-        for(int i =0; i<4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             temp.push_back(S(constructor, destructor));
         }
         assert(constructor == 4);
     }
-    assert(destructor ==4);
-
+    assert(destructor == 4);
 }
 
-
-int main(){
+int main() {
     Vectorv3TestStruct();
     testVectorV3PushPopMoveSize();
     testVectorV3ResizeValueOptClear();

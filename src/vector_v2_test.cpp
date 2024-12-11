@@ -1,6 +1,6 @@
+#include "vector_v2.hpp"
 #include <cassert>
 #include <iostream>
-#include "vector_v2.hpp"
 
 void testParamConstructorWithVectorV2() {
     struct S {
@@ -61,7 +61,7 @@ void testVectorV2ResizeValueOptClear() {
     assert(temp.size() == 0);
 }
 
-int main(){
+int main() {
     testParamConstructorWithVectorV2();
     testVectorV2PushPopMoveSize();
     testVectorV2ResizeValueOptClear();
