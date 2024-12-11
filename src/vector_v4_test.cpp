@@ -75,39 +75,43 @@ void testVectorV4ResizeValueOptClear() {
     assert(temp.size() == 0);
 }
 
-// void checkMemoryLeaks(){
-//     int constructor =0;
-//     int destructor =0;
-//     struct S{
-//         S(int& constructor, int& destructor): m_constructor(constructor), m_destructor(destructor){
-//             m_constructor++;
-//         }
+void checkMemoryLeaks(){
+    int constructor =0;
+    int destructor =0;
+    struct S{
+        S(int& constructor, int& destructor): m_constructor(constructor), m_destructor(destructor){
+            m_constructor++;
+        }
 
-//         S& operator=(const S& copy){
-//            m_constructor = copy.m_constructor;
-//            m_destructor = copy.m_destructor;
-//            return *this;
-//         }
+        S& operator=(const S& copy){
+           m_constructor = copy.m_constructor;
+           m_destructor = copy.m_destructor;
+           return *this;
+        }
 
-//         ~S(){
-//             m_destructor++;
-//         }
+        S(const S& copy): m_constructor(copy.m_constructor), m_destructor(copy.m_destructor) 
+        {
+        }
 
-//         int& m_constructor;
-//         int& m_destructor;
-//     };
-//     {
-//         VectorV4<S> temp;
-//         for(int i =0; i<4; i++)
-//         {
-//           S s(constructor, destructor);
-//           temp.push_back(s);
-//         }
-//        //  assert(constructor == 4);
-//     }
-//     // assert(destructor ==4);
+        ~S(){
+            m_destructor++;
+        }
 
-// }
+        int& m_constructor;
+        int& m_destructor;
+    };
+    {
+        VectorV4<S> temp;
+        for(int i =0; i<4; i++)
+        {
+          S s(constructor, destructor);
+        //  temp.push_back(s);
+        }
+       //  assert(constructor == 4);
+    }
+    // assert(destructor ==4);
+
+}
 
 void testVectorResizeValueOptClear() {
     VectorV4<int> temp;
@@ -152,7 +156,6 @@ void testS() {
         S(const S& copy) // copy constructor  a(b) int b(c)
         {
             // assert(x == 5);
-            std::cout << " copy constructor x = " << x << std::endl;
         }
         void realCopyConstructor(const S& copy) {
             // this->x(copy->x) /// calls copy constructor of all members ( ?? )
@@ -263,7 +266,7 @@ int main() {
     Vectorv4TestStruct();
     testVectorV4PushPopMoveSize();
     testVectorV4ResizeValueOptClear();
-    // checkMemoryLeaks();
+    checkMemoryLeaks();
     testVectorResizeValueOptClear();
     testVectorCopyConstructorCopyAssign();
     testS();
