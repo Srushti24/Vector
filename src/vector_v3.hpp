@@ -8,16 +8,14 @@ template <typename T> class VectorV3 {
   public:
     VectorV3() : capacity_(10), original_capacity_(10), size_(0), array_(new T*[capacity_]) {}
 
-    ~VectorV3() {
-        destroy();
-    }
+    ~VectorV3() { destroy(); }
 
     // Copy constructor
     VectorV3(const VectorV3& copy)
         : capacity_(copy.capacity_), size_(copy.size_), original_capacity_(copy.original_capacity_) {
         array_ = new T*[capacity_];
         for (size_t i = 0; i < size_; i++) {
-            T value = *copy.array_[i];
+            T value   = *copy.array_[i];
             array_[i] = new T(value);
         }
     }
@@ -76,12 +74,11 @@ template <typename T> class VectorV3 {
         }
         array_[size_] = new T(element);
         size_++;
-        
     }
 
-    void pop_back(){
-        delete array_[size_-1];
-        array_[size_-1] = nullptr;
+    void pop_back() {
+        delete array_[size_ - 1];
+        array_[size_ - 1] = nullptr;
         size_--;
     }
 

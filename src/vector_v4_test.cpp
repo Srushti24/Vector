@@ -75,42 +75,34 @@ void testVectorV4ResizeValueOptClear() {
     assert(temp.size() == 0);
 }
 
-void checkMemoryLeaks(){
-    int constructor =0;
-    int destructor =0;
-    struct S{
-        S(int& constructor, int& destructor): m_constructor(constructor), m_destructor(destructor){
-            m_constructor++;
+void checkMemoryLeaks() {
+    int constructor = 0;
+    int destructor  = 0;
+    struct S {
+        S(int& constructor, int& destructor) : m_constructor(constructor), m_destructor(destructor) { m_constructor++; }
+
+        S& operator=(const S& copy) {
+            m_constructor = copy.m_constructor;
+            m_destructor  = copy.m_destructor;
+            return *this;
         }
 
-        S& operator=(const S& copy){
-           m_constructor = copy.m_constructor;
-           m_destructor = copy.m_destructor;
-           return *this;
-        }
+        S(const S& copy) : m_constructor(copy.m_constructor), m_destructor(copy.m_destructor) {}
 
-        S(const S& copy): m_constructor(copy.m_constructor), m_destructor(copy.m_destructor) 
-        {
-        }
-
-        ~S(){
-            m_destructor++;
-        }
+        ~S() { m_destructor++; }
 
         int& m_constructor;
         int& m_destructor;
     };
     {
         VectorV4<S> temp;
-        for(int i =0; i<4; i++)
-        {
-          S s(constructor, destructor);
-        //  temp.push_back(s);
+        for (int i = 0; i < 4; i++) {
+            S s(constructor, destructor);
+            //  temp.push_back(s);
         }
-       //  assert(constructor == 4);
+        //  assert(constructor == 4);
     }
     // assert(destructor ==4);
-
 }
 
 void testVectorResizeValueOptClear() {
