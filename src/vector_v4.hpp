@@ -14,8 +14,7 @@ template <typename T> class VectorV4 {
         for (size_t i = 0; i < size_; i++) {
             temp[i].~T();
         }
-
-        // delete[] temp; // galat because we r not deciding type  T
+        delete[] reinterpret_cast<char*>(temp); // galat because we r not deciding type  T
         // you cant make an object die again, illegal behavior and program can crash
     }
 
@@ -28,20 +27,21 @@ template <typename T> class VectorV4 {
         capacity          = vectorv4Copy.capacity;
         original_capacity = vectorv4Copy.original_capacity;
         size_             = vectorv4Copy.size_;
+        size_             = vectorv4Copy.size_;
         for (size_t i = 0; i < size_; i++) {
-            temp[i] = vectorv4Copy[i];
+            new (&temp[i]) T(vectorv4Copy.temp[i]);
         }
     }
 
     // Copy Assignment Operator
     VectorV4& operator=(const VectorV4& vectorv4Copy) {
         destroy();
-        temp              = (T*) (new char[sizeof(T) * vectorv4Copy.capacity]);
         capacity          = vectorv4Copy.capacity;
+        temp              = (T*) (new char[sizeof(T) * vectorv4Copy.capacity]);
         original_capacity = vectorv4Copy.original_capacity;
         size_             = vectorv4Copy.size_;
         for (size_t i = 0; i < size_; i++) {
-            temp[i] = vectorv4Copy[i];
+            new (&temp[i]) T(vectorv4Copy.temp[i]);
         }
         return *this;
     }
@@ -76,7 +76,7 @@ template <typename T> class VectorV4 {
         if (size_ == capacity) {
             resize();
         }
-        temp[size_] = val; // it calls a function call, lets say f( which is copy assign)
+        //  temp[size_] = val; // it calls a function call, lets say f( which is copy assign) // y does this fail?
         // f(&temp[size_], val);
         // these are just function names, udhar kachra hai// it will not have kachra when there is
         // some function called which sets its value
@@ -109,6 +109,7 @@ template <typename T> class VectorV4 {
 
     // size_
     int size() { return size_; }
+
     int capacity;
     T*  temp;
     int original_capacity;

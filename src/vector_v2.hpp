@@ -45,7 +45,7 @@ template <typename T> class VectorV2 {
     // Move Assignment operator
     VectorV2& operator=(VectorV2&& VectorV2Copy) {
         destroy();
-        array_                 = VectorV2Copy.array_;
+        array_                 = std::move(VectorV2Copy.array_);
         capacity_              = VectorV2Copy.capacity_;
         size_                  = VectorV2Copy.size_;
         VectorV2Copy.array_    = new std::unique_ptr<T>[capacity_];
@@ -55,11 +55,11 @@ template <typename T> class VectorV2 {
     }
 
     // Push element
-    template <typename... Args> void push_back(Args&&... args) {
+    void push_back(T element) {
         if (size_ == capacity_) {
             resize();
         }
-        array_[size_] = std::make_unique<T>(std::forward<Args>(args)...);
+        array_[size_] = std::make_unique<T>(element);
         size_++;
     }
 

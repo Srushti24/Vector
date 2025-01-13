@@ -1,19 +1,19 @@
-#include "vector.hpp"
+#include "vector_v1.hpp"
 #include <cassert>
 #include <iostream>
 
-void testVectorPushPopMoveSize() {
-    Vector<int> temp;
+void testVectorV1PushPopMoveSize() {
+    VectorV1<int> temp;
     temp.push_back(3);
     temp.push_back(5);
     assert(temp.size() == 2);
-    Vector<int> temp1;
+    VectorV1<int> temp1;
     temp1 = std::move(temp); // Move Assignment constructor tested
     assert(temp1.size() == 2);
     assert(temp1[0] == 3);
     assert(temp1[1] == 5);
     assert(temp.size() == 0);
-    Vector<int> temp2(std::move(temp1)); // Move constructor tested
+    VectorV1<int> temp2(std::move(temp1)); // Move constructor tested
     assert(temp1.size() == 0);
     assert(temp2[0] == 3);
     assert(temp2[1] == 5);
@@ -21,8 +21,8 @@ void testVectorPushPopMoveSize() {
     assert(temp2.size() == 1);
 }
 
-void testVectorResizeValueOptClear() {
-    Vector<int> temp;
+void testVectorV1ResizeValueOptClear() {
+    VectorV1<int> temp;
     for (size_t i = 0; i < 15; i++) {
         temp.push_back(i);
     }
@@ -34,13 +34,13 @@ void testVectorResizeValueOptClear() {
     assert(temp.size() == 0);
 }
 
-void testVectorCopyConstructorCopyAssign() {
-    Vector<int> temp;
+void testVectorV1CopyConstructorCopyAssign() {
+    VectorV1<int> temp;
     for (size_t i = 0; i < 15; i++) {
         temp.push_back(i * 2);
     }
-    Vector<int> temp1 = temp; // Copy Assign
-    Vector<int> temp2(temp);  // Copy constructor
+    VectorV1<int> temp1 = temp; // Copy Assign
+    VectorV1<int> temp2(temp);  // Copy constructor
     assert(temp1.size() == 15);
     assert(temp2.size() == 15);
     for (size_t i = 0; i < temp.size(); i++) {
@@ -50,8 +50,8 @@ void testVectorCopyConstructorCopyAssign() {
 }
 
 int main() {
-    testVectorPushPopMoveSize();
-    testVectorResizeValueOptClear();
-    testVectorCopyConstructorCopyAssign();
+    testVectorV1PushPopMoveSize();
+    testVectorV1ResizeValueOptClear();
+    testVectorV1CopyConstructorCopyAssign();
     return 0;
 }
