@@ -6,113 +6,99 @@
 
 template <typename T> class VectorV4 {
   public:
-    VectorV4() : capacity(10), temp((T*) (new char[sizeof(T) * capacity])), original_capacity(10), size_(0) {}
+    VectorV4() : capacity_(10), array_((T*) (new char[sizeof(T) * capacity_])), size_(0) {}
 
     ~VectorV4() { destroy(); }
 
     void destroy() {
-        for (size_t i = 0; i < size_; i++) {
-            temp[i].~T();
+        if (size_ != 0) {
+            for (size_t i = 0; i < size_; i++) {
+                array_[i].~T();
+            }
+            delete[] reinterpret_cast<char*>(array_);
+            size_ = 0;
         }
-        delete[] reinterpret_cast<char*>(temp); // galat because we r not deciding type  T
-        // you cant make an object die again, illegal behavior and program can crash
     }
 
-    T& operator[](int pos) { return temp[pos]; }
-    T& operator[](int pos) const { return temp[pos]; }
+    T& operator[](int pos) { return array_[pos]; }
+    T& operator[](int pos) const { return array_[pos]; }
 
-    // Copy Constructor
     VectorV4(const VectorV4& vectorv4Copy) {
-        temp              = (T*) (new char[sizeof(T) * vectorv4Copy.capacity]);
-        capacity          = vectorv4Copy.capacity;
-        original_capacity = vectorv4Copy.original_capacity;
-        size_             = vectorv4Copy.size_;
-        size_             = vectorv4Copy.size_;
+        array_    = (T*) (new char[sizeof(T) * vectorv4Copy.capacity_]);
+        capacity_ = vectorv4Copy.capacity_;
+        size_     = vectorv4Copy.size_;
         for (size_t i = 0; i < size_; i++) {
-            new (&temp[i]) T(vectorv4Copy.temp[i]);
+            new (&array_[i]) T(vectorv4Copy.array_[i]);
         }
     }
 
-    // Copy Assignment Operator
     VectorV4& operator=(const VectorV4& vectorv4Copy) {
         destroy();
-        capacity          = vectorv4Copy.capacity;
-        temp              = (T*) (new char[sizeof(T) * vectorv4Copy.capacity]);
-        original_capacity = vectorv4Copy.original_capacity;
-        size_             = vectorv4Copy.size_;
+        capacity_ = vectorv4Copy.capacity_;
+        array_    = (T*) (new char[sizeof(T) * vectorv4Copy.capacity_]);
+        size_     = vectorv4Copy.size_;
         for (size_t i = 0; i < size_; i++) {
-            new (&temp[i]) T(vectorv4Copy.temp[i]);
+            new (&array_[i]) T(vectorv4Copy.array_[i]);
         }
         return *this;
     }
 
-    // Move Assignment Operator
     VectorV4& operator=(VectorV4&& vectorv4Copy) {
         destroy();
-        temp                           = vectorv4Copy.temp;
-        original_capacity              = vectorv4Copy.original_capacity;
-        capacity                       = vectorv4Copy.capacity;
-        size_                          = vectorv4Copy.size_;
-        vectorv4Copy.temp              = nullptr;
-        vectorv4Copy.original_capacity = 10;
-        vectorv4Copy.capacity          = 10;
-        vectorv4Copy.size_             = 0;
+        array_              = vectorv4Copy.array_;
+        capacity_              = vectorv4Copy.capacity_;
+        size_                  = vectorv4Copy.size_;
+        vectorv4Copy.array_    = nullptr;
+        vectorv4Copy.capacity_ = 10;
+        vectorv4Copy.size_     = 0;
         return *this;
     }
 
-    // Move Constructor
     VectorV4(VectorV4&& vectorv4Copy)
-        : temp(vectorv4Copy.temp), size_(vectorv4Copy.size_), original_capacity(vectorv4Copy.original_capacity),
-          capacity(vectorv4Copy.capacity) {
-        vectorv4Copy.temp              = (T*) new char[sizeof(T) * vectorv4Copy.capacity];
-        vectorv4Copy.capacity          = 10;
-        vectorv4Copy.original_capacity = 10;
-        vectorv4Copy.size_             = 0;
+        : array_(vectorv4Copy.array_), size_(vectorv4Copy.size_), capacity_(vectorv4Copy.capacity_) {
+        vectorv4Copy.array_    = (T*) new char[sizeof(T) * vectorv4Copy.capacity_];
+        vectorv4Copy.capacity_ = 10;
+        vectorv4Copy.size_     = 0;
     }
 
-    // Push Back
-    void push_back(T val) // fix push_back,  //0,12,24 a(b)
-    {
-        if (size_ == capacity) {
+    void push_back(T val) {
+        if (size_ == capacity_) {
             resize();
         }
-        //  temp[size_] = val; // it calls a function call, lets say f( which is copy assign) // y does this fail?
-        // f(&temp[size_], val);
-        // these are just function names, udhar kachra hai// it will not have kachra when there is
-        // some function called which sets its value
-        new (&temp[size_]) T(val); // copy constructor -- function call
-        // new is a syntax for a function call to constructor(depends on params and how its defined)
-        // f( &temp[size_],val);
+        new (&array_[size_]) T(val);
         size_++;
     }
 
     void clear() {
         destroy();
-        temp              = nullptr;
-        original_capacity = 10;
-        capacity          = 10;
-        size_             = 0;
+        array_    = nullptr;
+        capacity_ = 10;
+        size_     = 0;
     }
 
     void resize() {
-        capacity      = 2 * capacity;
-        T* copy_size_ = (T*) (new char[sizeof(T) * capacity]);
-        for (size_t i = 0; i < capacity; i++) {
-            copy_size_[i] = temp[i];
+        capacity_     = 2 * capacity_;
+        T* new_array_ = (T*) (new char[sizeof(T) * capacity_]);
+        for (size_t i = 0; i < size_; i++) {
+            new (&new_array_[i]) T(array_[i]);
         }
-        delete[] temp; // wrong
-        temp = copy_size_;
+        for (size_t i = 0; i < size_; i++) {
+            array_[i].~T();
+        }
+        delete[] reinterpret_cast<char*>(array_);
+        array_ = new_array_;
     }
 
-    // Pop Back
-    void pop_back() { size_--; }
+    void pop_back() {
+        array_[size_ - 1].~T();
+        size_--;
+    }
 
-    // size_
     int size() { return size_; }
 
-    int capacity;
-    T*  temp;
-    int original_capacity;
+  private:
+    int capacity_;
+    T*  array_;
     int size_;
 };
 
