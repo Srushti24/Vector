@@ -81,6 +81,11 @@ void checkMemoryLeaks() {
     struct S {
         S(int& constructor, int& destructor) : m_constructor(constructor), m_destructor(destructor) { m_constructor++; }
 
+        S(const S& copy)                                                         // Copy Constructor
+            : m_constructor(copy.m_constructor), m_destructor(copy.m_destructor) // copy constructor
+        {
+            m_constructor++;
+        }
         ~S() { m_destructor++; }
 
         int& m_constructor;
@@ -92,9 +97,9 @@ void checkMemoryLeaks() {
         for (int i = 0; i < 4; i++) {
             temp.push_back(S(constructor, destructor));
         }
-        assert(constructor == 4);
+        assert(constructor == 8);
     }
-    assert(destructor == 4);
+    assert(destructor == 8);
 }
 
 int main() {

@@ -7,8 +7,11 @@ vector_v3_test.cpp)
 add_executable(vector_v2_test 
 vector_v2_test.cpp)
 
-add_executable(vector_test 
-vector_test.cpp)
+add_executable(vector_v1_test 
+vector_v1_test.cpp)
+
+add_executable(vector_generic_test 
+vector_generic_test.cpp)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_compile_options(-fsanitize=address -g)

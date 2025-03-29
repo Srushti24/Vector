@@ -15,8 +15,7 @@ template <typename T> class VectorV3 {
         : capacity_(copy.capacity_), size_(copy.size_), original_capacity_(copy.original_capacity_) {
         array_ = new T*[capacity_];
         for (size_t i = 0; i < size_; i++) {
-            T value   = *copy.array_[i];
-            array_[i] = new T(value);
+            array_[i] = new T(*copy.array_[i]);
         }
     }
 
@@ -64,7 +63,12 @@ template <typename T> class VectorV3 {
         array_             = new T*[capacity_];
     }
 
-    void destroy() { delete[] array_; }
+    void destroy() {
+        for (size_t i = 0; i < size_; i++) {
+            delete array_[i];
+        }
+        delete[] array_;
+    }
 
     T operator[](int position) { return *array_[position]; }
 
